@@ -1,5 +1,5 @@
 ---
-title: "Tipping Points of AMR"
+title: "Abundance Analysis"
 ---
 
 All code and analysis presented here by [Paul Villanueva][paul_github].
