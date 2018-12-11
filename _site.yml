@@ -5,8 +5,8 @@ navbar:
   left:
   - text: Project Overview
     href: index.html
-  - text: Data Exploration
-    href: data_exploration.html
+  - text: Abundance Analysis
+    href: primer_design.html
     
 output:
   html_document:
