@@ -1,0 +1,19 @@
+---
+title: "Primer Design"
+---
+
+```{r setup.1, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = "images/")
+```
+
+```{r setup.2}
+library(data.table, warn.conflicts = FALSE)
+library(igraph, warn.conflicts = FALSE)
+library(ggplot2, warn.conflicts = FALSE)
+```
+
+# Reading in data
+
+```{}
+
+```
