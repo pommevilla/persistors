@@ -12,12 +12,84 @@ library(ggplot2, warn.conflicts = FALSE)
 
 # Reading in data
 
+ARG counts by sample:
+
 ```{r read_data.1}
-arg_counts <- read.delim("arg_counts.edit", sep = "\t")
+arg_counts <- read.delim("arg_counts.edit", sep = "\t", row.names = 1)
 head(arg_counts)
 ```
 
-```{r transpose_data.1}
-transposed <- t(arg_counts)
-head(transposed)
+ARG totals by factors:
+
+```{r arg_totals.1}
+arg_means <- read.delim("arg_means.tsv", sep = "\t", row.names = 1)
+head(arg_means)
+```
+
+
+Positive (negative) value $x$ indicate there is $x$ more (less) of a gene detected in manure.
+
+```{r manure_data.1}
+manure.means <- arg_means[, c(1:3)]
+head(manure.means)
+```
+
+
+
+Adding column for differential abundances between pig- and cow-associated manure
+```{r manure_data.2}
+manure.means$manure.pig_beef.diffs <- manure.means$manure.pig.mean - manure.means$manure.beef.mean
+head(manure.means)
+```
+
+# Bootstrapping
+
+```{r load_bootstrap_package.1}
+library(boot)
+```
+
+Create a mean function for use with bootstrapping.
+
+```{r bootstrapping.1}
+boot.mean <- function(x, d) {
+  return(mean(x[d]))
+}
+```
+
+Bootstrapping of mean abundance for manure-pig samples.
+
+```{r bootstrapping.2}
+boot.manure.pig <- boot(manure.means$manure.pig.mean, boot.mean, R = 10000)
+summary(boot.manure.pig)
+```
+
+```{r bootstrapping.3}
+plot(boot.manure.pig, index = 1)
+```
+
+```{r bootstrapping.4}
+boot.ci(boot.manure.pig, type = "bca")
+```
+
+Thus, according to our bootstrap, any genes with observed abundances higher than 155 in the `manure-pig` treatment should be considered significant.  The list of genes higher than that abundance in the `manure.pig` treatments are:
+
+```{r bootstrapping.5}
+(sig_genes.manure.pig <- row.names(manure.means[manure.means$manure.pig.mean > 155, ]))
+```
+
+We repeat this process for the `manure.beef` treatments.  We first create a function to automate this:
+```{r bootstrapping.6}
+get_sig_genes <- function(df, treat, r = 10000)
+{
+  bootstrap <- boot(df[, treat], boot.mean, R = r)
+  bootstrap.results <- boot.ci(bootstrap, type = "bca")
+  upper_cutoff <- bootstrap.results$bca[5]
+  return(row.names(df[df[, treat] > upper_cutoff, ]))
+}
+```
+
+Now we can feed it our data frame and treatment to `get_sig_genes` to get a list of significant genes for that ground-animal treatment.  Passing the data frame `manure.means` and the treatment `manure.beef`, our genes are:
+
+```{r bootstrapping.7}
+(sig_genes.manure.beef <- get_sig_genes(manure.means, "manure.beef.mean"))
 ```
