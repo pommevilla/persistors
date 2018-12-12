@@ -1,6 +1,4 @@
-	manure	manure	manure	manure	manure	manure	soil	soil	soil	soil	soil	soil					
-	pig	pig	pig	beef	beef	beef	pig	pig	pig	beef	beef	beef					
-	A224Pman1_S41_L006	A225Pman2_S42_L006	A226Pman3_S43_L006	A227Bman1_S44_L006	A228Bman2_S45_L006	A229Bman3_S46_L006	A230BMaS0C_S47_L007	A231BMaS0C_S48_L007	A232BMaS0C_S49_L007	A233PCoS0C_S50_L007	A234PCoS0C_S51_L007	A235PCoS0C_S52_L007	manure.sum	soil.sum	pig.sum	beef.sum	total.sum
+gene	manure.pig.1	manure.pig.2	manure.pig.3	manure.beef.1	manure.beef.2	manure.beef.3	soil.pig.1	soil.pig.2	soil.pig.3	soil.beef.1	soil.beef.2	soil.beef.3	manure.sum	soil.sum	pig.sum	beef.sum	total.sum
 gb|L42544|+|0-1956|ARO:3000193|tetT	5747	5617	4187	2066	1691	1628	0	1	0	2	1	1	20936	5	15552	5389	20941
 gb|AM180355|+|600033-601953|ARO:3000186|tetM	4369	4472	3280	2431	1273	2038	0	0	0	0	2	0	17863	2	12121	5744	17865
 gb|Z21523|+|0-1974|ARO:3000191|tetQ	3372	3469	2586	1577	642	1283	0	1	0	0	0	0	12929	1	9428	3502	12930
