@@ -307,12 +307,271 @@ div.tocify {
 </div>
 
 
-<pre class="r"><code>library(data.table, warn.conflicts = FALSE)
-library(igraph, warn.conflicts = FALSE)
-library(ggplot2, warn.conflicts = FALSE)</code></pre>
+<pre class="r"><code>library(ggplot2, warn.conflicts = FALSE)</code></pre>
 <div id="reading-in-data" class="section level1">
 <h1>Reading in data</h1>
-<pre><code></code></pre>
+<p>ARG counts by sample:</p>
+<pre class="r"><code>arg_counts &lt;- read.delim(&quot;arg_counts.edit&quot;, sep = &quot;\t&quot;, row.names = 1)
+head(arg_counts)</code></pre>
+<pre><code>##                                              manure.pig.1 manure.pig.2
+## gb|L42544|+|0-1956|ARO:3000193|tetT                  5747         5617
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM         4369         4472
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                  3372         3469
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36               3327         3461
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44          2755         2890
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE           2676         2693
+##                                              manure.pig.3 manure.beef.1
+## gb|L42544|+|0-1956|ARO:3000193|tetT                  4187          2066
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM         3280          2431
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                  2586          1577
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36               2514          2998
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44          2261           385
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE           1959           657
+##                                              manure.beef.2 manure.beef.3
+## gb|L42544|+|0-1956|ARO:3000193|tetT                   1691          1628
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM          1273          2038
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                    642          1283
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                1454          2687
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44            171           283
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE             343           609
+##                                              soil.pig.1 soil.pig.2
+## gb|L42544|+|0-1956|ARO:3000193|tetT                   0          1
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM          0          0
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                   0          1
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                0          0
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44           2          2
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE            2          4
+##                                              soil.pig.3 soil.beef.1
+## gb|L42544|+|0-1956|ARO:3000193|tetT                   0           2
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM          0           0
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                   0           0
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                0           0
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44           1          11
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE            0           2
+##                                              soil.beef.2 soil.beef.3
+## gb|L42544|+|0-1956|ARO:3000193|tetT                    1           1
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM           2           0
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                    0           0
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                 0           1
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44            7           7
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE             3           1</code></pre>
+<p>ARG totals by factors:</p>
+<pre class="r"><code>arg_means &lt;- read.delim(&quot;arg_means.tsv&quot;, sep = &quot;\t&quot;, row.names = 1)
+head(arg_means)</code></pre>
+<pre><code>##                                              manure.pig.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 5183.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        4040.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 3142.333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              3100.667
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44         2635.333
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE          2442.667
+##                                              manure.beef.mean manure.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 1795.0000    6978.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        1914.0000    5954.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 1167.3333    4309.667
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              2379.6667    5480.333
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44          279.6667    2915.000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE           536.3333    2979.000
+##                                              soil.pig.mean soil.beef.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT              0.3333333      1.3333333
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM     0.0000000      0.6666667
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ              0.3333333      0.0000000
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36           0.0000000      0.3333333
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44      1.6666667      8.3333333
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE       2.0000000      2.0000000
+##                                               soil.mean pig.mean beef.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT           1.6666667 5184.000 1796.3333
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM  0.6666667 4040.333 1914.6667
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ           0.3333333 3142.667 1167.3333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36        0.3333333 3100.667 2380.0000
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44  10.0000000 2637.000  288.0000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE    4.0000000 2444.667  538.3333
+##                                              combined.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT               6980.333
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM      5955.000
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ               4310.000
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36            5480.667
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44       2925.000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE        2983.000
+##                                              manure_soil.mean.diff
+## gb|L42544|+|0-1956|ARO:3000193|tetT                       6977.000
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM              5953.667
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                       4309.333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                    5480.000
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44               2905.000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE                2975.000
+##                                              pig_beef.mean.diff
+## gb|L42544|+|0-1956|ARO:3000193|tetT                   3387.6667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM          2125.6667
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                   1975.3333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                 720.6667
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44           2349.0000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE            1906.3333</code></pre>
+<p>Positive (negative) value <span class="math inline">\(x\)</span> indicate there is <span class="math inline">\(x\)</span> more (less) of a gene detected in manure.</p>
+<pre class="r"><code>manure.means &lt;- arg_means[, c(1:3)]
+head(manure.means)</code></pre>
+<pre><code>##                                              manure.pig.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 5183.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        4040.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 3142.333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              3100.667
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44         2635.333
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE          2442.667
+##                                              manure.beef.mean manure.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 1795.0000    6978.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        1914.0000    5954.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 1167.3333    4309.667
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              2379.6667    5480.333
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44          279.6667    2915.000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE           536.3333    2979.000</code></pre>
+<p>Adding column for differential abundances between pig- and cow-associated manure</p>
+<pre class="r"><code>manure.means$manure.pig_beef.diffs &lt;- manure.means$manure.pig.mean - manure.means$manure.beef.mean
+head(manure.means)</code></pre>
+<pre><code>##                                              manure.pig.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 5183.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        4040.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 3142.333
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              3100.667
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44         2635.333
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE          2442.667
+##                                              manure.beef.mean manure.mean
+## gb|L42544|+|0-1956|ARO:3000193|tetT                 1795.0000    6978.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM        1914.0000    5954.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                 1167.3333    4309.667
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36              2379.6667    5480.333
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44          279.6667    2915.000
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE           536.3333    2979.000
+##                                              manure.pig_beef.diffs
+## gb|L42544|+|0-1956|ARO:3000193|tetT                       3388.667
+## gb|AM180355|+|600033-601953|ARO:3000186|tetM              2126.333
+## gb|Z21523|+|0-1974|ARO:3000191|tetQ                       1975.000
+## gb|AJ514254|+|0-1923|ARO:3000197|tet36                     721.000
+## gb|FN594949|+|25244-27167|ARO:3000556|tet44               2355.667
+## gb|JX560992|+|11387-12872|ARO:3003206|lsaE                1906.333</code></pre>
+</div>
+<div id="bootstrapping" class="section level1">
+<h1>Bootstrapping</h1>
+<pre class="r"><code>library(boot)</code></pre>
+<p>Create a mean function for use with bootstrapping.</p>
+<pre class="r"><code>boot.mean &lt;- function(x, d) {
+  return(mean(x[d]))
+}</code></pre>
+<p>Bootstrapping of mean abundance for manure-pig samples.</p>
+<pre class="r"><code>boot.manure.pig &lt;- boot(manure.means$manure.pig.mean, boot.mean, R = 10000)
+summary(boot.manure.pig)</code></pre>
+<pre><code>##           Length Class  Mode     
+## t0            1  -none- numeric  
+## t         10000  -none- numeric  
+## R             1  -none- numeric  
+## data        427  -none- numeric  
+## seed        626  -none- numeric  
+## statistic     1  -none- function 
+## sim           1  -none- character
+## call          4  -none- call     
+## stype         1  -none- character
+## strata      427  -none- numeric  
+## weights     427  -none- numeric</code></pre>
+<pre class="r"><code>plot(boot.manure.pig, index = 1)</code></pre>
+<p><img src="images/bootstrapping.3-1.png" width="672" /></p>
+<pre class="r"><code>boot.ci(boot.manure.pig, type = &quot;bca&quot;)</code></pre>
+<pre><code>## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 10000 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.manure.pig, type = &quot;bca&quot;)
+## 
+## Intervals : 
+## Level       BCa          
+## 95%   ( 65.76, 155.12 )  
+## Calculations and Intervals on Original Scale</code></pre>
+<p>Thus, according to our bootstrap, any genes with observed abundances higher than 155 in the <code>manure-pig</code> treatment should be considered significant. The list of genes higher than that abundance in the <code>manure.pig</code> treatments are:</p>
+<pre class="r"><code>(sig_genes.manure.pig &lt;- row.names(manure.means[manure.means$manure.pig.mean &gt; 155, ]))</code></pre>
+<pre><code>##  [1] &quot;gb|L42544|+|0-1956|ARO:3000193|tetT&quot;                
+##  [2] &quot;gb|AM180355|+|600033-601953|ARO:3000186|tetM&quot;       
+##  [3] &quot;gb|Z21523|+|0-1974|ARO:3000191|tetQ&quot;                
+##  [4] &quot;gb|AJ514254|+|0-1923|ARO:3000197|tet36&quot;             
+##  [5] &quot;gb|FN594949|+|25244-27167|ARO:3000556|tet44&quot;        
+##  [6] &quot;gb|JX560992|+|11387-12872|ARO:3003206|lsaE&quot;         
+##  [7] &quot;gb|EU434751|+|658-2578|ARO:3000194|tetW&quot;            
+##  [8] &quot;gb|KC688833|+|0-804|ARO:3002836|lnuB&quot;               
+##  [9] &quot;gb|L20800|+|1062-2325|ARO:3000180|tetA(P)&quot;          
+## [10] &quot;gb|AF242872|+|2131-2878|ARO:3000375|ErmB&quot;           
+## [11] &quot;gb|FN594949|+|27481-28339|ARO:3002629|ANT(6)-Ib&quot;    
+## [12] &quot;gb|NC_013342.1|-|26737-27499|ARO:3003905|ANT(4&#39;)-Ib&quot;
+## [13] &quot;gb|CP004067|+|52914-53709|ARO:3002647|APH(3&#39;)-IIIa&quot; 
+## [14] &quot;gb|KX470419.1|+|3811-4615|ARO:3004085|lnuG&quot;         
+## [15] &quot;gb|M18896.2|+|206-2126|ARO:3000190|tetO&quot;            
+## [16] &quot;gb|Y15510|+|0-1203|ARO:3000175|tet(H)&quot;              
+## [17] &quot;gb|KU736867.1|+|19653-21573|ARO:3004442|tet(W/N/W)&quot; 
+## [18] &quot;gb|JQ740052|+|2108-3329|ARO:3000567|tet(40)&quot;        
+## [19] &quot;gb|NC_023287|-|60996-61860|ARO:3002626|ANT(6)-Ia&quot;   
+## [20] &quot;gb|M12730|+|779-1514|ARO:3000250|ErmC&quot;              
+## [21] &quot;gb|AJ295238.3|+|163-2083|ARO:3000196|tet32&quot;         
+## [22] &quot;gb|NC_023287|-|65291-66509|ARO:3000615|mefA&quot;        
+## [23] &quot;gb|AY928180|+|0-495|ARO:3002837|lnuC&quot;               
+## [24] &quot;gb|KU612222.1|+|80337-81078|ARO:3003908|Erm(47)&quot;    
+## [25] &quot;gb|JX560992|+|8592-9321|ARO:3002630|ANT(9)-Ia&quot;      
+## [26] &quot;gb|M17124|+|1181-1982|ARO:3000498|ErmF&quot;             
+## [27] &quot;gb|L22689|+|261-1035|ARO:3000593|ErmQ&quot;              
+## [28] &quot;gb|NC_009495.1|-|3035492-3036527|ARO:3004146|cfrC&quot;  
+## [29] &quot;gb|L09756|+|0-1926|ARO:3000192|tetS&quot;                
+## [30] &quot;gb|U01945|+|373-916|ARO:3002897|SAT-4&quot;              
+## [31] &quot;gb|AY712687|+|0-831|ARO:3002628|aad(6)&quot;             
+## [32] &quot;gb|NC_009632|+|49744-50476|ARO:3000347|ErmA&quot;        
+## [33] &quot;gb|AF319779.2|+|32-833|ARO:3000604|Erm(35)&quot;         
+## [34] &quot;gb|M11036|+|0-1377|ARO:3000179|tet(L)&quot;              
+## [35] &quot;gb|U51479|+|0-921|ARO:3002636|APH(2&#39;&#39;)-IIIa&quot;        
+## [36] &quot;gb|NC_012469|-|1800927-1802391|ARO:3000616|mel&quot;     
+## [37] &quot;gb|M64090|+|0-735|ARO:3000595|ErmT&quot;                 
+## [38] &quot;gb|AY055428|-|20268-21084|ARO:3000412|sul2&quot;         
+## [39] &quot;gb|FR772051|+|8740-10315|ARO:3002833|vgaE&quot;          
+## [40] &quot;gb|L20800|+|2308-4267|ARO:3000195|tetB(P)&quot;          
+## [41] &quot;gb|NC_005076|+|9897-10629|ARO:3000599|Erm(33)&quot;</code></pre>
+<p>We repeat this process for the <code>manure.beef</code> treatments. We first create a function to automate this:</p>
+<pre class="r"><code>get_sig_genes &lt;- function(df, treat, r = 10000)
+{
+  bootstrap &lt;- boot(df[, treat], boot.mean, R = r)
+  bootstrap.results &lt;- boot.ci(bootstrap, type = &quot;bca&quot;)
+  upper_cutoff &lt;- bootstrap.results$bca[5]
+  return(row.names(df[df[, treat] &gt; upper_cutoff, ]))
+}</code></pre>
+<p>Now we can feed it our data frame and treatment to <code>get_sig_genes</code> to get a list of significant genes for that ground-animal treatment. Passing the data frame <code>manure.means</code> and the treatment <code>manure.beef</code>, our genes are:</p>
+<pre class="r"><code>(sig_genes.manure.beef &lt;- get_sig_genes(manure.means, &quot;manure.beef.mean&quot;))</code></pre>
+<pre><code>##  [1] &quot;gb|L42544|+|0-1956|ARO:3000193|tetT&quot;                      
+##  [2] &quot;gb|AM180355|+|600033-601953|ARO:3000186|tetM&quot;             
+##  [3] &quot;gb|Z21523|+|0-1974|ARO:3000191|tetQ&quot;                      
+##  [4] &quot;gb|AJ514254|+|0-1923|ARO:3000197|tet36&quot;                   
+##  [5] &quot;gb|FN594949|+|25244-27167|ARO:3000556|tet44&quot;              
+##  [6] &quot;gb|JX560992|+|11387-12872|ARO:3003206|lsaE&quot;               
+##  [7] &quot;gb|EU434751|+|658-2578|ARO:3000194|tetW&quot;                  
+##  [8] &quot;gb|KC688833|+|0-804|ARO:3002836|lnuB&quot;                     
+##  [9] &quot;gb|L20800|+|1062-2325|ARO:3000180|tetA(P)&quot;                
+## [10] &quot;gb|KX470419.1|+|3811-4615|ARO:3004085|lnuG&quot;               
+## [11] &quot;gb|M18896.2|+|206-2126|ARO:3000190|tetO&quot;                  
+## [12] &quot;gb|Y15510|+|0-1203|ARO:3000175|tet(H)&quot;                    
+## [13] &quot;gb|KU736867.1|+|19653-21573|ARO:3004442|tet(W/N/W)&quot;       
+## [14] &quot;gb|NC_023287|-|60996-61860|ARO:3002626|ANT(6)-Ia&quot;         
+## [15] &quot;gb|AJ295238.3|+|163-2083|ARO:3000196|tet32&quot;               
+## [16] &quot;gb|NC_023287|-|65291-66509|ARO:3000615|mefA&quot;              
+## [17] &quot;gb|JX560992|+|8592-9321|ARO:3002630|ANT(9)-Ia&quot;            
+## [18] &quot;gb|L09756|+|0-1926|ARO:3000192|tetS&quot;                      
+## [19] &quot;gb|AY712687|+|0-831|ARO:3002628|aad(6)&quot;                   
+## [20] &quot;gb|NC_012469|-|1800927-1802391|ARO:3000616|mel&quot;           
+## [21] &quot;gb|AY055428|-|20268-21084|ARO:3000412|sul2&quot;               
+## [22] &quot;gb|L20800|+|2308-4267|ARO:3000195|tetB(P)&quot;                
+## [23] &quot;gb|FJ196385|-|11083-12313|ARO:3003107|mefB&quot;               
+## [24] &quot;gb|AM399080|-|1664-2150|ARO:3002835|lnuA&quot;                 
+## [25] &quot;gb|M37699|+|585-1752|ARO:3000205|tetX&quot;                    
+## [26] &quot;gb|AF024602|+|3155-3992|ARO:3002660|APH(6)-Id&quot;            
+## [27] &quot;gb|AF313472|+|15593-16397|ARO:3002639|APH(3&#39;&#39;)-Ib&quot;        
+## [28] &quot;gb|JF969163|+|1053-1893|ARO:3000410|sul1&quot;                 
+## [29] &quot;gb|AF121000|-|0-1155|ARO:3000183|tet(Z)&quot;                  
+## [30] &quot;gb|AJ420072.1|+|22939-24163|ARO:3000478|tet(33)&quot;          
+## [31] &quot;gb|DQ390458|-|3095-3995|ARO:3002609|aadA9&quot;                
+## [32] &quot;gb|AP006618.1|+|4835199-4838688|ARO:3000501|Nocardia&quot;     
+## [33] &quot;gb|AF024666|+|35934-37110|ARO:3002703|cmx&quot;                
+## [34] &quot;gb|D37826|+|1070-2195|ARO:3002812|pp-flo&quot;                 
+## [35] &quot;gb|NC_014638|-|1610636-1613960|ARO:3003730|Bifidobacteria&quot;</code></pre>
 </div>
 
 <p><br>
