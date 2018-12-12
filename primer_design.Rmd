@@ -7,13 +7,17 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "images/")
 ```
 
 ```{r setup.2}
-library(data.table, warn.conflicts = FALSE)
-library(igraph, warn.conflicts = FALSE)
 library(ggplot2, warn.conflicts = FALSE)
 ```
 
 # Reading in data
 
-```{}
+```{r read_data.1}
+arg_counts <- read.delim("arg_counts.edit", sep = "\t")
+head(arg_counts)
+```
 
+```{r transpose_data.1}
+transposed <- t(arg_counts)
+head(transposed)
 ```
